@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>520 爱的告白</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #ff6b6b, #ffc0cb);
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 800px;
+            /* margin: 0 auto; */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff4b4b;
+            transform: rotate(45deg);
+            animation: float 3s ease-in-out infinite;
+            opacity: 0;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff4b4b;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            left: -10px;
+        }
+
+        .heart::after {
+            top: -10px;
+        }
+
+        @keyframes float {
+            0% {
+                transform: rotate(45deg) translateY(0) scale(1);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(45deg) translateY(-100vh) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .message {
+            background: rgba(255, 255, 255, 0.9);
+            padding: clamp(1rem, 5vw, 2rem);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #ff4b4b;
+            font-size: clamp(1.8em, 5vw, 2.5em);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            color: #666;
+            font-size: clamp(1em, 3vw, 1.2em);
+            line-height: 1.6;
+            margin: 15px 0;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #ff4b4b;
+            color: white;
+            border: none;
+            padding: clamp(8px, 2vw, 10px) clamp(15px, 3vw, 20px);
+            border-radius: 25px;
+            font-size: clamp(0.9em, 2.5vw, 1.1em);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 75, 75, 0.3);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .photo-frame {
+            width: clamp(150px, 40vw, 200px);
+            height: clamp(150px, 40vw, 200px);
+            border: 5px solid white;
+            border-radius: 50%;
+            margin: 20px auto;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 新增样式 */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            animation: rotate 3s linear infinite;
+        }
+
+        .music-control.paused {
+            animation-play-state: paused;
+        }
+
+        .typing-text {
+            border-right: 2px solid #ff4b4b;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #ff4b4b }
+        }
+
+        .floating-elements {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-element {
+            position: absolute;
+            font-size: 24px;
+            animation: float-around 10s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes float-around {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(100px, 100px) rotate(90deg);
+            }
+            50% {
+                transform: translate(0, 200px) rotate(180deg);
+            }
+            75% {
+                transform: translate(-100px, 100px) rotate(270deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        .countdown {
+            font-size: clamp(1em, 3vw, 1.5em);
+            color: #ff4b4b;
+            margin: 20px 0;
+            font-weight: bold;
+            padding: 0 10px;
+        }
+
+        .photo-frame {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .photo-frame:hover {
+            transform: scale(1.1);
+        }
+
+        .message p {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        #specialMessage, #loveStory {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #specialMessage.show, #loveStory.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .heart-burst {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes heartBurst {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .heart-photo {
+            position: fixed;
+            top: -120px;
+            width: clamp(60px, 20vw, 100px);
+            height: clamp(54px, 18vw, 90px);
+            pointer-events: none;
+            z-index: 2000;
+            animation: photo-fall 3.5s linear forwards;
+            background: #fff;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .heart-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            clip-path: path('M50 15 C50 0, 0 0, 0 37.5 C0 75, 50 90, 50 90 C50 90, 100 75, 100 37.5 C100 0, 50 0, 50 15 Z');
+            -webkit-clip-path: path('M50 15 C50 0, 0 0, 0 37.5 C0 75, 50 90, 50 90 C50 90, 100 75, 100 37.5 C100 0, 50 0, 50 15 Z');
+        }
+        @keyframes photo-fall {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh) scale(1.1) rotate(30deg);
+                opacity: 0.7;
+            }
+        }
+
+        /* 新增动画样式 */
+        .star {
+            position: fixed;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            animation: twinkle 1s ease-in-out infinite;
+        }
+
+        .petal {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            animation: petal-fall 3s linear forwards;
+        }
+
+        .love-glow {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            animation: glow 2s ease-out forwards;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes petal-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes glow {
+            0% {
+                transform: scale(0);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 75, 75, 0.3);
+            z-index: 1001;
+            opacity: 0;
+            animation: message-pop 0.5s forwards;
+        }
+
+        @keyframes message-pop {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .love-quote {
+            font-style: italic;
+            color: #ff4b4b;
+            margin: 10px 0;
+            text-align: center;
+            font-size: clamp(0.9em, 2.5vw, 1.1em);
+        }
+
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .message {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            .btn-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 200px;
+            }
+
+            .heart-photo {
+                animation-duration: 2.5s;
+            }
+
+            .petal {
+                font-size: 20px !important;
+            }
+
+            .star {
+                width: 3px !important;
+                height: 3px !important;
+            }
+        }
+
+        /* 平板优化 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                max-width: 90%;
+            }
+
+            .message {
+                max-width: 80%;
+            }
+        }
+
+        /* 大屏幕优化 */
+        @media (min-width: 1025px) {
+            .container {
+                max-width: 500px;
+            }
+
+            .message {
+                max-width: 500px;
+            }
+        }
+
+        /* 触摸设备优化 */
+        @media (hover: none) {
+            .btn:active {
+                transform: scale(0.95);
+            }
+
+            .photo-frame:active {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements" id="floatingElements"></div>
+    
+    <div class="music-control" onclick="toggleMusic()">
+        🎵
+    </div>
+
+    <div class="container">
+        <div class="message">
+            <h1 class="typing-text">老婆 520 我爱你</h1>
+            <div class="countdown" id="countdown"></div>
+            <div class="photo-frame" >
+                <img src="https://files.catbox.moe/4xahpk.jpg" alt="Love" id="lovePhoto">
+            </div>
+            <p>亲爱的，在这个特别的日子里，</p>
+            <p>我想对你说：</p>
+            <p>你是我生命中最美丽的意外，</p>
+            <p>是我最珍贵的礼物。</p>
+            <p>愿我们的爱情，</p>
+            <p>如同这满屏的爱心，</p>
+            <p>永远跳动，永远温暖。</p>
+            <div class="btn-container">
+                <button class="btn" onclick="showSpecialMessage(event)">点击查看我的心意</button>
+                <button class="btn" onclick="showLoveStory(event)">我们的故事</button>
+            </div>
+            <p id="specialMessage" class="hidden">❤️ 我永远爱你 ❤️</p>
+            <p id="loveStory" class="hidden">
+                从遇见你的那一刻起，<br>
+                我的世界就被你的笑容点亮。<br>
+                每一天都因为有你而变得特别，<br>
+                愿我们的爱情永远如初见般美好。
+            </p>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://music.163.com/song/media/outer/url?id=1824045033.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+
+        setInterval(createHeart, 300);
+
+        function createHeartBurst(x, y) {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-burst');
+            heart.innerHTML = '❤️';
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            heart.style.animation = 'heartBurst 1s ease-out forwards';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 1000);
+        }
+
+        function createConfetti(x, y) {
+            const colors = ['#ff4b4b', '#ff6b6b', '#ffc0cb', '#ff69b4'];
+            for (let i = 0; i < 20; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = x + 'px';
+                confetti.style.top = y + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animation = `confetti-fall ${Math.random() * 2 + 1}s linear forwards`;
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+
+        function createStar(x, y) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = x + 'px';
+            star.style.top = y + 'px';
+            star.style.width = Math.random() * 4 + 2 + 'px';
+            star.style.height = star.style.width;
+            document.body.appendChild(star);
+            setTimeout(() => star.remove(), 1000);
+        }
+
+        function createPetal(x, y) {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.innerHTML = '🌸';
+            petal.style.left = x + 'px';
+            petal.style.top = y + 'px';
+            petal.style.fontSize = Math.random() * 10 + 10 + 'px';
+            petal.style.animationDuration = Math.random() * 2 + 2 + 's';
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), 3000);
+        }
+
+        function createLoveGlow(x, y) {
+            const glow = document.createElement('div');
+            glow.className = 'love-glow';
+            glow.style.left = x + 'px';
+            glow.style.top = y + 'px';
+            glow.style.width = '100px';
+            glow.style.height = '100px';
+            glow.style.background = 'radial-gradient(circle, rgba(255,75,75,0.3) 0%, rgba(255,75,75,0) 70%)';
+            document.body.appendChild(glow);
+            setTimeout(() => glow.remove(), 2000);
+        }
+
+        function showLoveMessage() {
+            const quotes = [
+                "愿我们能拥有理想中的房子和车子",
+                "你是我心中永恒的旋律",
+                "爱你是我一生的承诺",
+                "与你相伴是我最大的幸福",
+                "每一天都因你而灿烂",
+                "你是我生命中最美的风景",
+                "愿我们的爱情如星辰般璀璨",
+                "你是我心中最美的诗篇",
+                "与你携手走过每一个春夏秋冬",
+                "爱你如初，心永不变",
+                "你是我生命中最闪亮的星",
+                "你是我生命中最美丽的意外",
+                "愿我们的爱情永远如初见般美好",
+                "你是我最珍贵的礼物",
+                "遇见你是我最幸运的事",
+                "愿我们的爱情永远甜蜜"
+            ];
+            
+            const messageBox = document.createElement('div');
+            messageBox.className = 'message-box';
+            messageBox.innerHTML = `
+                <div class="love-quote">${quotes[Math.floor(Math.random() * quotes.length)]}</div>
+                <div style="text-align: center; margin-top: 10px;">❤️</div>
+            `;
+            document.body.appendChild(messageBox);
+            setTimeout(() => messageBox.remove(), 3000);
+        }
+
+        function showSpecialMessage(event) {
+            const message = document.getElementById('specialMessage');
+            message.classList.add('show');
+            
+            // 创建爱心爆炸效果
+            if (event) {
+                createHeartBurst(event.clientX, event.clientY);
+                createConfetti(event.clientX, event.clientY);
+                createLoveGlow(event.clientX, event.clientY);
+                
+                // 创建星星效果
+                for(let i = 0; i < 20; i++) {
+                    setTimeout(() => {
+                        const x = event.clientX + (Math.random() - 0.5) * 200;
+                        const y = event.clientY + (Math.random() - 0.5) * 200;
+                        createStar(x, y);
+                    }, i * 50);
+                }
+                
+                // 创建花瓣效果
+                for(let i = 0; i < 15; i++) {
+                    setTimeout(() => {
+                        const x = event.clientX + (Math.random() - 0.5) * 300;
+                        const y = event.clientY - 100;
+                        createPetal(x, y);
+                    }, i * 100);
+                }
+            }
+            
+            // 显示随机爱情语录
+            showLoveMessage();
+            
+            // 创建更多爱心
+            for(let i = 0; i < 10; i++) {
+                setTimeout(createHeart, i * 200);
+            }
+
+            // 添加打字机效果
+            const text = "❤️ 我永远爱你 ❤️";
+            message.innerHTML = '';
+            let i = 0;
+            const typeWriter = () => {
+                if (i < text.length) {
+                    message.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 100);
+                }
+            };
+            typeWriter();
+        }
+
+        function dropHeartPhotos() {
+            const photoCount = 12;
+            const keywords = ['love', 'romance', 'heart', 'couple', 'kiss', 'hug', '520'];
+            
+            for (let i = 0; i < photoCount; i++) {
+                setTimeout(() => {
+                    const photo = document.createElement('div');
+                    photo.className = 'heart-photo';
+                    photo.style.left = Math.random() * 80 + 'vw';
+                    photo.style.animationDuration = (Math.random() * 1.5 + 2.5) + 's';
+                    photo.style.transform = `rotate(${Math.random() * 60 - 30}deg)`;
+                    
+                    const img = document.createElement('img');
+                    const randomKeyword = keywords[Math.floor(Math.random() * keywords.length)];
+                    img.src = `https://source.unsplash.com/random/100x90/?${randomKeyword}&t=${Date.now()}`;
+                    img.alt = 'love';
+                    
+                    // 确保图片加载完成后再显示
+                    img.onload = () => {
+                        photo.appendChild(img);
+                        document.body.appendChild(photo);
+                        setTimeout(() => photo.remove(), 4000);
+                    };
+                    
+                    // 如果图片加载失败，使用备用图片
+                    img.onerror = () => {
+                        img.src = `https://picsum.photos/100/90?random=${Date.now()}`;
+                    };
+                }, i * 200);
+            }
+        }
+
+        function showLoveStory(event) {
+            const story = document.getElementById('loveStory');
+            story.classList.add('show');
+            
+            // 创建爱心爆炸效果
+            if (event) {
+                createHeartBurst(event.clientX, event.clientY);
+                createConfetti(event.clientX, event.clientY);
+            }
+            
+            // 飘落心形照片
+            dropHeartPhotos();
+            
+            // 添加打字机效果
+            const text = `从遇见你的那一刻起，<br>
+                        我的世界就被你的笑容点亮。<br>
+                        每一天都因为有你而变得特别，<br>
+                        愿我们的爱情永远如初见般美好。`;
+            story.innerHTML = '';
+            let i = 0;
+            const typeWriter = () => {
+                if (i < text.length) {
+                    story.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50);
+                }
+            };
+            typeWriter();
+        }
+
+        // 为按钮添加点击事件
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                const rect = btn.getBoundingClientRect();
+                const x = rect.left + rect.width / 2;
+                const y = rect.top + rect.height / 2;
+                createHeartBurst(x, y);
+                createConfetti(x, y);
+            });
+        });
+
+        // 背景音乐控制
+        const bgMusic = document.getElementById('bgMusic');
+        const musicControl = document.querySelector('.music-control');
+        let isMusicPlaying = false;
+
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                musicControl.classList.add('paused');
+            } else {
+                bgMusic.play();
+                musicControl.classList.remove('paused');
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        // 倒计时
+        function updateCountdown() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+            const currentDate = now.getDate();
+            
+            // 设置目标日期为今年的5月20日
+            let target = new Date(currentYear, 4, 20, 0, 0, 0);
+            
+            // 如果当前日期已经过了今年的520，就计算到明年的520
+            if (currentMonth > 4 || (currentMonth === 4 && currentDate > 20)) {
+                target = new Date(currentYear + 1, 4, 20, 0, 0, 0);
+            }
+            
+            const diff = target - now;
+            
+            // 确保时间差为正数
+            if (diff < 0) {
+                target = new Date(currentYear + 1, 4, 20, 0, 0, 0);
+                const newDiff = target - now;
+                updateCountdownDisplay(newDiff);
+            } else {
+                updateCountdownDisplay(diff);
+            }
+        }
+
+        function updateCountdownDisplay(diff) {
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            // 如果距离下一个520还有不到1天，显示特殊消息
+            if (days === 0 && hours < 24) {
+                document.getElementById('countdown').innerHTML = 
+                    `距离520还有：<br>${hours}小时 ${minutes}分 ${seconds}秒<br>❤️ 马上就要到了 ❤️`;
+            } else {
+                document.getElementById('countdown').innerHTML = 
+                    `距离下一个520还有：<br>${days}天 ${hours}小时 ${minutes}分 ${seconds}秒`;
+            }
+        }
+
+        // 每秒更新一次倒计时
+        setInterval(updateCountdown, 1000);
+        // 立即执行一次
+        updateCountdown();
+
+        // // 更换照片
+        // function changePhoto() {
+        //     const photo = document.getElementById('lovePhoto');
+        //     photo.src = `https://source.unsplash.com/random/200x200/?love&t=${new Date().getTime()}`;
+        // }
+
+        // 添加漂浮元素
+        const symbols = ['❤️', '💑', '💖', '💝', '💕', '💓', '💗', '💘'];
+        const floatingElements = document.getElementById('floatingElements');
+
+        for (let i = 0; i < 10; i++) {
+            const element = document.createElement('div');
+            element.classList.add('floating-element');
+            element.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            element.style.left = Math.random() * 100 + 'vw';
+            element.style.top = Math.random() * 100 + 'vh';
+            element.style.animationDelay = Math.random() * 5 + 's';
+            floatingElements.appendChild(element);
+        }
+
+        // 为每个段落添加延迟动画
+        document.querySelectorAll('.message p').forEach((p, index) => {
+            p.style.animationDelay = `${index * 0.3}s`;
+        });
+
+        // 添加触摸事件支持
+        document.addEventListener('touchstart', function(e) {
+            if (e.target.classList.contains('btn')) {
+                e.target.style.transform = 'scale(0.95)';
+            }
+        });
+
+        document.addEventListener('touchend', function(e) {
+            if (e.target.classList.contains('btn')) {
+                e.target.style.transform = '';
+            }
+        });
+
+        // 优化移动端动画性能
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // 根据设备调整动画效果
+        if (isMobile()) {
+            // 减少移动端的动画元素数量
+            const reduceAnimations = () => {
+                const heartCount = 8; // 减少爱心数量
+                const starCount = 10; // 减少星星数量
+                const petalCount = 8; // 减少花瓣数量
+                
+                // 更新相关函数中的数量
+                window.heartCount = heartCount;
+                window.starCount = starCount;
+                window.petalCount = petalCount;
+            };
+            
+            reduceAnimations();
+        }
+
+        // 优化图片加载
+        function preloadImages() {
+            const imageUrls = [
+                'https://files.catbox.moe/4xahpk.jpg',
+                // 添加其他需要预加载的图片
+            ];
+            
+            imageUrls.forEach(url => {
+                const img = new Image();
+                img.src = url;
+            });
+        }
+
+        // 页面加载完成后预加载图片
+        window.addEventListener('load', preloadImages);
+    </script>
+</body>
+</html> 
